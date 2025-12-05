@@ -1,8 +1,8 @@
 // SIMULACAO DE LOGIN (pode integrar com Banco de Dados depois)
 const clientes = [
-    { cpf: "111.111.111-11", senha: "123" },
-    { cpf: "222.222.222-22", senha: "456" },
-    { cpf: "333.333.333-33", senha: "789" }
+    { cpf: "11111111111", senha: "123" },
+    { cpf: "22222222222", senha: "456" },
+    { cpf: "33333333333", senha: "789" }
 ];
 
 // PRODUTOS DO SEU BANCO COM IMAGENS
@@ -16,12 +16,29 @@ const produtos = [
 
 let total = 0;
 
+// -------- MÁSCARA DE CPF (opcional, visual) --------
+function mascaraCPF(campo) {
+    let cpf = campo.value.replace(/\D/g, ""); 
+
+    if (cpf.length > 3 && cpf.length <= 6) {
+        campo.value = cpf.replace(/(\d{3})(\d+)/, "$1.$2");
+    } 
+    else if (cpf.length > 6 && cpf.length <= 9) {
+        campo.value = cpf.replace(/(\d{3})(\d{3})(\d+)/, "$1.$2.$3");
+    } 
+    else if (cpf.length > 9) {
+        campo.value = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2}).*/, "$1.$2.$3-$4");
+    }
+}
+
 // -------- LOGIN --------
 function login() {
-    const cpf = document.getElementById("cpf").value;
-    const senha = document.getElementById("senha").value;
+    let cpfDigitado = document.getElementById("cpf").value;
+    let senha = document.getElementById("senha").value;
 
-    const cliente = clientes.find(c => c.cpf === cpf && c.senha === senha);
+    let cpfLimpo = cpfDigitado.replace(/\D/g, ""); // REMOVE PONTOS E TRAÇOS
+
+    const cliente = clientes.find(c => c.cpf === cpfLimpo && c.senha === senha);
 
     if (!cliente) {
         alert("CPF ou senha incorretos!");
@@ -34,7 +51,7 @@ function login() {
     carregarProdutos();
 }
 
-// -------- CARREGA PRODUTOS NA TELA --------
+// -------- CARREGA PRODUTOS COM IMAGENS --------
 function carregarProdutos() {
     const lista = document.getElementById("produtos-list");
     lista.innerHTML = "";
@@ -51,13 +68,13 @@ function carregarProdutos() {
     });
 }
 
-// -------- ADICIONAR PRODUTO AO TOTAL --------
+// -------- ADICIONAR PRODUTO --------
 function addProduto(valor) {
     total += valor;
     document.getElementById("total").innerText = total.toFixed(2);
 }
 
-// -------- FINALIZAR VENDA --------
+// -------- FINALIZAR COMPRA --------
 function finalizarCompra() {
     if (total === 0) {
         alert("Nenhum produto selecionado!");
